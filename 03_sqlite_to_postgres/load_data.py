@@ -9,8 +9,8 @@ import psycopg2
 from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
 
-logging.basicConfig(level=logging.INFO)
-
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger("Load Logger")
 
 @dataclass
 class FilmWork(object):
@@ -96,8 +96,7 @@ class PersonFilmWork(object):
 
 class SQLiteLoader(str):
 
-    @staticmethod
-    def load_movies():
+    def load_movies(self):
 
         try:
             cursor = sqlite_conn.cursor()
@@ -225,8 +224,7 @@ class SQLiteLoader(str):
 
 class PostgresSaver(str):
 
-    @staticmethod
-    def save_all_data(data):
+    def save_all_data(self, data):
 
         cursor = pg_conn.cursor()
 
@@ -278,23 +276,6 @@ class PostgresSaver(str):
             warning('Write to PostgreSQL person table error')
             warning(e)
 
-
-        try:
-            info('Write to PostgreSQL person_film_work table')
-            for row in data.get('person_film_work'):
-                print(len(row))
-                for entry in row:
-                    cursor.execute(
-                        'insert into content.person_film_work (id, person_id, film_work_id, role, created) values (%s, %s, %s, %s, %s) on conflict do nothing',
-                        (entry.id,
-                         entry.person_id,
-                         entry.film_work_id,
-                         entry.role,
-                         entry.created))
-
-        except psycopg2.Error as e:
-            warning('Write to PostgreSQL person_film_work table error')
-            warning(e)
         try:
             info('Write to PostgreSQL genre_film_work table')
             for row in data.get('genre_film_work'):
@@ -307,6 +288,22 @@ class PostgresSaver(str):
                          entry.created))
         except psycopg2.Error as e:
             warning('Write to PostgreSQL genre_film_work table error')
+            warning(e)
+
+        try:
+            info('Write to PostgreSQL person_film_work table')
+            for row in data.get('person_film_work'):
+                for entry in row:
+                    cursor.execute(
+                        'insert into content.person_film_work (id, person_id, film_work_id, role, created) values (%s, %s, %s, %s, %s) on conflict do nothing',
+                        (entry.id,
+                         entry.person_id,
+                         entry.film_work_id,
+                         entry.role,
+                         entry.created))
+
+        except psycopg2.Error as e:
+            warning('Write to PostgreSQL person_film_work table error')
             warning(e)
 
 
@@ -336,7 +333,7 @@ if __name__ == '__main__':
         'host': '127.0.0.1',
         'port': 5432,
     }
-    with sqlite3.connect('db.sqlite') as sqlite_conn, psycopg2.connect(**dsl, cursor_factory=DictCursor) as pg_conn:
+    with sqlite3.connect('../db.sqlite') as sqlite_conn, psycopg2.connect(**dsl, cursor_factory=DictCursor) as pg_conn:
         try:
             load_from_sqlite(sqlite_conn, pg_conn)
         except Exception as error:

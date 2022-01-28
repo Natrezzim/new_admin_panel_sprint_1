@@ -36,7 +36,7 @@ class Genre(UUIDMixin, TimeStampedMixin):
 
 
 class Person(UUIDMixin, TimeStampedMixin):
-    full_name = models.TextField(_('actor name'), max_length=50)
+    full_name = models.TextField(_('person name'), max_length=50)
 
     def __str__(self):
         return self.full_name
@@ -44,8 +44,8 @@ class Person(UUIDMixin, TimeStampedMixin):
     class Meta:
         db_table = "content\".\"person"
 
-        verbose_name = _('actor')
-        verbose_name_plural = _('actors')
+        verbose_name = _('person')
+        verbose_name_plural = _('person')
 
 
 class Filmwork(UUIDMixin, TimeStampedMixin):

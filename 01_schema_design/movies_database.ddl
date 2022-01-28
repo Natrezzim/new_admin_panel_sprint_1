@@ -49,10 +49,10 @@ ALTER TABLE content.genre_film_work ADD FOREIGN KEY (film_work_id) REFERENCES co
 
 ALTER TABLE content.genre_film_work ADD FOREIGN KEY (genre_id) REFERENCES content.genre (id);
 
-CREATE UNIQUE INDEX person_film_work_idx ON content.person_film_work (film_work_id, person_id);
+CREATE INDEX person_film_work_idx ON content.person_film_work (film_work_id, person_id);
 
-CREATE UNIQUE INDEX genre_film_work_idx ON content.genre_film_work (film_work_id, genre_id);
+CREATE INDEX genre_film_work_idx ON content.genre_film_work (film_work_id, genre_id);
 
-CREATE UNIQUE INDEX film_work_idx ON content.film_work (id, title, creation_date);
+CREATE INDEX film_work_idx ON content.film_work (id, title, creation_date);
 
-CREATE UNIQUE INDEX person_idx ON content.person (id, full_name);
+CREATE INDEX person_idx ON content.person (id, full_name);
