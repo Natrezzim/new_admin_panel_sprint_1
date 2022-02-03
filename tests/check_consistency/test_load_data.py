@@ -1,12 +1,17 @@
 import collections
+import os
 import sqlite3
 
 import psycopg2
+from dotenv import load_dotenv, dotenv_values
 
-sqlite_conn = sqlite3.connect('')
+load_dotenv()
+config = dotenv_values("../.env")
 
-pg_conn = psycopg2.connect(dbname='', user='',
-                           password='', host='', port=)
+sqlite_conn = sqlite3.connect(os.environ.get('SQLITE'))
+
+pg_conn = psycopg2.connect(dbname=os.environ.get('DB_NAME'), user=os.environ.get('DB_USER'),
+                           password=os.environ.get('DB_PASSWORD'), host=os.environ.get('DB_HOST'), port=os.environ.get('DB_PORT'))
 
 cursor_sqlite = sqlite_conn.cursor()
 cursor_postgresql = pg_conn.cursor()

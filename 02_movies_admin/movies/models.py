@@ -43,6 +43,9 @@ class Person(UUIDMixin, TimeStampedMixin):
 
     class Meta:
         db_table = "content\".\"person"
+        indexes = [
+            models.Index(fields=['id', 'full_name'], name='person_idx'),
+        ]
 
         verbose_name = _('person')
         verbose_name_plural = _('person')
@@ -82,6 +85,10 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
     class Meta:
         db_table = "content\".\"film_work"
 
+        indexes = [
+            models.Index(fields=['id', 'title', 'creation_date'], name='film_work_idx'),
+        ]
+
         verbose_name = _('film work')
         verbose_name_plural = _('film works')
 
@@ -96,6 +103,9 @@ class GenreFilmwork(UUIDMixin):
 
     class Meta:
         db_table = "content\".\"genre_film_work"
+        indexes = [
+            models.Index(fields=['film_work_id', 'genre_id'], name='genre_film_work_idx'),
+        ]
 
         verbose_name = _('genre')
         verbose_name_plural = _('genres')
@@ -110,8 +120,23 @@ class PersonFilmWork(UUIDMixin):
     def __str__(self):
         return ''
 
+    class Role(models.TextChoices):
+        ACTOR = 'actor', _('actor')
+        WRITER = 'writer', _('writer')
+        DIRECTOR = 'director', _('director')
+
+    role = models.TextField(
+        _('role'),
+        max_length=50,
+        choices=Role.choices,
+        default=Role.ACTOR
+    )
+
     class Meta:
         db_table = "content\".\"person_film_work"
+        indexes = [
+            models.Index(fields=['film_work_id', 'person_id'], name='person_film_work_idx'),
+                   ]
 
         verbose_name = _('role')
         verbose_name_plural = _('roles')
